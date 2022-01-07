@@ -1014,7 +1014,7 @@ library EnumerableSet {
         return uint256(_at(set._inner, index));
     }
 }
-// Biswap token with Governance.
+// Geometry token with Governance.
 contract GXOToken is BEP20('Geometry', 'GXO') {
     using EnumerableSet for EnumerableSet.AddressSet;
     EnumerableSet.AddressSet private _minters;
