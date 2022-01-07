@@ -694,7 +694,7 @@ contract SmartChef is Ownable {
     }
 
     // The GXO TOKEN!
-    IBEP20 public biswap;
+    IBEP20 public geometry;
     IBEP20 public rewardToken;
 
     // GXO tokens created per block.
@@ -728,7 +728,7 @@ contract SmartChef is Ownable {
         uint256 _startBlock,
         uint256 _bonusEndBlock
     ) public {
-        biswap = _gxo;
+        geometry = _gxo;
         rewardToken = _rewardToken;
         rewardPerBlock = _rewardPerBlock;
         startBlock = _startBlock;
@@ -834,7 +834,7 @@ contract SmartChef is Ownable {
         }
     }
 
-    // Stake biswap tokens to SmartChef
+    // Stake geometry tokens to SmartChef
     function deposit(uint256 _amount) public {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
@@ -867,7 +867,7 @@ contract SmartChef is Ownable {
         emit Deposit(msg.sender, _amount);
     }
 
-    // Withdraw biswap tokens from STAKING.
+    // Withdraw geometry tokens from STAKING.
     function withdraw(uint256 _amount) public {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
