@@ -1015,7 +1015,7 @@ library EnumerableSet {
     }
 }
 // Biswap token with Governance.
-contract BSWToken is BEP20('Biswap', 'BSW') {
+contract GXOToken is BEP20('Geometry', 'GXO') {
     using EnumerableSet for EnumerableSet.AddressSet;
     EnumerableSet.AddressSet private _minters;
 
@@ -1032,7 +1032,7 @@ contract BSWToken is BEP20('Biswap', 'BSW') {
     // Which is copied and modified from COMPOUND:
     // https://github.com/compound-finance/compound-protocol/blob/master/contracts/Governance/Comp.sol
 
-    /// @notice A record of each accounts delegate
+    /// @dev A record of each accounts delegate
     mapping (address => address) internal _delegates;
 
     /// @notice A checkpoint for marking number of votes from a given block
@@ -1128,9 +1128,9 @@ contract BSWToken is BEP20('Biswap', 'BSW') {
         );
 
         address signatory = ecrecover(digest, v, r, s);
-        require(signatory != address(0), "BSW::delegateBySig: invalid signature");
-        require(nonce == nonces[signatory]++, "BSW::delegateBySig: invalid nonce");
-        require(now <= expiry, "BSW::delegateBySig: signature expired");
+        require(signatory != address(0), "GXO::delegateBySig: invalid signature");
+        require(nonce == nonces[signatory]++, "GXO::delegateBySig: invalid nonce");
+        require(now <= expiry, "GXO::delegateBySig: signature expired");
         return _delegate(signatory, delegatee);
     }
 
@@ -1160,7 +1160,7 @@ contract BSWToken is BEP20('Biswap', 'BSW') {
         view
         returns (uint256)
     {
-        require(blockNumber < block.number, "BSW::getPriorVotes: not yet determined");
+        require(blockNumber < block.number, "GXO::getPriorVotes: not yet determined");
 
         uint32 nCheckpoints = numCheckpoints[account];
         if (nCheckpoints == 0) {
@@ -1197,7 +1197,7 @@ contract BSWToken is BEP20('Biswap', 'BSW') {
         internal
     {
         address currentDelegate = _delegates[delegator];
-        uint256 delegatorBalance = balanceOf(delegator); // balance of underlying BSWs (not scaled);
+        uint256 delegatorBalance = balanceOf(delegator); // balance of underlying GXOs (not scaled);
         _delegates[delegator] = delegatee;
 
         emit DelegateChanged(delegator, currentDelegate, delegatee);
@@ -1233,7 +1233,7 @@ contract BSWToken is BEP20('Biswap', 'BSW') {
     )
         internal
     {
-        uint32 blockNumber = safe32(block.number, "BSW::_writeCheckpoint: block number exceeds 32 bits");
+        uint32 blockNumber = safe32(block.number, "GXO::_writeCheckpoint: block number exceeds 32 bits");
 
         if (nCheckpoints > 0 && checkpoints[delegatee][nCheckpoints - 1].fromBlock == blockNumber) {
             checkpoints[delegatee][nCheckpoints - 1].votes = newVotes;
@@ -1258,12 +1258,12 @@ contract BSWToken is BEP20('Biswap', 'BSW') {
 
 
     function addMinter(address _addMinter) public onlyOwner returns (bool) {
-        require(_addMinter != address(0), "BSW: _addMinter is the zero address");
+        require(_addMinter != address(0), "GXO: _addMinter is the zero address");
         return EnumerableSet.add(_minters, _addMinter);
     }
 
     function delMinter(address _delMinter) public onlyOwner returns (bool) {
-        require(_delMinter != address(0), "BSW: _delMinter is the zero address");
+        require(_delMinter != address(0), "GXO: _delMinter is the zero address");
         return EnumerableSet.remove(_minters, _delMinter);
     }
 
@@ -1276,7 +1276,7 @@ contract BSWToken is BEP20('Biswap', 'BSW') {
     }
 
     function getMinter(uint256 _index) public view onlyOwner returns (address){
-        require(_index <= getMinterLength() - 1, "BSW: index out of bounds");
+        require(_index <= getMinterLength() - 1, "GXO: index out of bounds");
         return EnumerableSet.at(_minters, _index);
     }
 

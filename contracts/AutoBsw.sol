@@ -785,25 +785,25 @@ interface IMasterChef {
 
     function leaveStaking(uint256 _amount) external;
 
-    function pendingBSW(uint256 _pid, address _user) external view returns (uint256);
+    function pendingGXO(uint256 _pid, address _user) external view returns (uint256);
 
     function userInfo(uint256 _pid, address _user) external view returns (uint256, uint256);
 
     function emergencyWithdraw(uint256 _pid) external;
 }
 
-contract autoBsw is Ownable, Pausable {
+contract autoGxo is Ownable, Pausable {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
     struct UserInfo {
         uint256 shares; // number of shares for a user
         uint256 lastDepositedTime; // keeps track of deposited time for potential penalty
-        uint256 BswAtLastUserAction; // keeps track of Bsw deposited at the last user action
+        uint256 GxoAtLastUserAction; // keeps track of Gxo deposited at the last user action
         uint256 lastUserActionTime; // keeps track of the last user action time
     }
 
-    IERC20 public immutable token; // Bsw token
+    IERC20 public immutable token; // Gxo token
 
     IMasterChef public immutable masterchef;
 
@@ -832,7 +832,7 @@ contract autoBsw is Ownable, Pausable {
 
     /**
      * @notice Constructor
-     * @param _token: Bsw token contract
+     * @param _token: Gxo token contract
      * @param _masterchef: MasterChef contract
      * @param _admin: address of the admin
      * @param _treasury: address of the treasury (collects fees)
@@ -870,9 +870,9 @@ contract autoBsw is Ownable, Pausable {
     }
 
     /**
-     * @notice Deposits funds into the Bsw Vault
+     * @notice Deposits funds into the Gxo Vault
      * @dev Only possible when contract not paused.
-     * @param _amount: number of tokens to deposit (in Bsw)
+     * @param _amount: number of tokens to deposit (in Gxo)
      */
     function deposit(uint256 _amount) external whenNotPaused notContract {
         require(_amount > 0, "Nothing to deposit");
@@ -892,7 +892,7 @@ contract autoBsw is Ownable, Pausable {
 
         totalShares = totalShares.add(currentShares);
 
-        user.BswAtLastUserAction = user.shares.mul(balanceOf()).div(totalShares);
+        user.GxoAtLastUserAction = user.shares.mul(balanceOf()).div(totalShares);
         user.lastUserActionTime = block.timestamp;
 
         _earn();
@@ -908,7 +908,7 @@ contract autoBsw is Ownable, Pausable {
     }
 
     /**
-     * @notice Reinvests Bsw tokens into MasterChef
+     * @notice Reinvests Gxo tokens into MasterChef
      * @dev Only possible when contract not paused.
      */
     function harvest() external notContract whenNotPaused {
@@ -994,7 +994,7 @@ contract autoBsw is Ownable, Pausable {
     }
 
     /**
-     * @notice Withdraw unexpected tokens sent to the Bsw Vault
+     * @notice Withdraw unexpected tokens sent to the Gxo Vault
      */
     function inCaseTokensGetStuck(address _token) external onlyAdmin {
         require(_token != address(token), "Token cannot be same as deposit token");
@@ -1023,10 +1023,10 @@ contract autoBsw is Ownable, Pausable {
 
     /**
      * @notice Calculates the expected harvest reward from third party
-     * @return Expected reward to collect in Bsw
+     * @return Expected reward to collect in Gxo
      */
-    function calculateHarvestBswRewards() external view returns (uint256) {
-        uint256 amount = IMasterChef(masterchef).pendingBSW(0, address(this));
+    function calculateHarvestGxoRewards() external view returns (uint256) {
+        uint256 amount = IMasterChef(masterchef).pendingGXO(0, address(this));
         amount = amount.add(available());
         uint256 currentCallFee = amount.mul(callFee).div(10000);
 
@@ -1035,10 +1035,10 @@ contract autoBsw is Ownable, Pausable {
 
     /**
      * @notice Calculates the total pending rewards that can be restaked
-     * @return Returns total pending Bsw rewards
+     * @return Returns total pending Gxo rewards
      */
-    function calculateTotalPendingBswRewards() external view returns (uint256) {
-        uint256 amount = IMasterChef(masterchef).pendingBSW(0, address(this));
+    function calculateTotalPendingGxoRewards() external view returns (uint256) {
+        uint256 amount = IMasterChef(masterchef).pendingGXO(0, address(this));
         amount = amount.add(available());
 
         return amount;
@@ -1052,7 +1052,7 @@ contract autoBsw is Ownable, Pausable {
     }
 
     /**
-     * @notice Withdraws from funds from the Bsw Vault
+     * @notice Withdraws from funds from the Gxo Vault
      * @param _shares: Number of shares to withdraw
      */
     function withdraw(uint256 _shares) public notContract {
@@ -1082,9 +1082,9 @@ contract autoBsw is Ownable, Pausable {
         }
 
         if (user.shares > 0) {
-            user.BswAtLastUserAction = user.shares.mul(balanceOf()).div(totalShares);
+            user.GxoAtLastUserAction = user.shares.mul(balanceOf()).div(totalShares);
         } else {
-            user.BswAtLastUserAction = 0;
+            user.GxoAtLastUserAction = 0;
         }
 
         user.lastUserActionTime = block.timestamp;
