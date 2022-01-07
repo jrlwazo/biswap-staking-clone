@@ -84,14 +84,14 @@ library SafeBEP20 {
         }
     }
 }
-import "./BSWToken.sol";
+import "./GXOToken.sol";
 
 contract InvestorMine is Ownable {
     using SafeMath for uint256;
     using SafeBEP20 for IBEP20;
 
-    // The BSW TOKEN!
-    BSWToken public BSW;
+    // The GXO TOKEN!
+    GXOToken public GXO;
 
     //Investor, Dev, Refs percent decimals
     uint256 public percentDec = 1000000;
@@ -115,29 +115,29 @@ contract InvestorMine is Ownable {
 
     // Last block then developer withdraw dev, ref, investor
     uint256 public lastBlockWithdraw;
-    // BSW tokens created per block.
-    uint256 public BSWPerBlock;
+    // GXO tokens created per block.
+    uint256 public GXOPerBlock;
 
     event updatedLastBlock(uint256 _blockNumber);
-    event updatedBswPerBlock(uint256 _amount);
+    event updatedGxoPerBlock(uint256 _amount);
     event updatedPercents(uint256 _investor, uint256 _dev, uint256 _ref, uint256 _safu);
     event updatedAddresses(address _investoraddr, address _devaddr, address _refaddr, address _safuaddr);
 
     constructor(
-        BSWToken _BSW,
+        GXOToken _GXO,
         address _devaddr,
         address _refaddr,
         address _safuaddr,
         address _investoraddr,
-        uint256 _BSWPerBlock,
+        uint256 _GXOPerBlock,
         uint256 _startBlock
     ) public {
-        BSW = _BSW;
+        GXO = _GXO;
         investoraddr = _investoraddr;
         devaddr = _devaddr;
         refaddr = _refaddr;
         safuaddr = _safuaddr;
-        BSWPerBlock = _BSWPerBlock;
+        GXOPerBlock = _GXOPerBlock;
         lastBlockWithdraw = _startBlock;
 
         investorPercent = 857000;
@@ -154,11 +154,11 @@ contract InvestorMine is Ownable {
     function withdraw() public{
         require(lastBlockWithdraw < block.number, 'wait for new block');
         uint256 multiplier = getMultiplier(lastBlockWithdraw, block.number);
-        uint256 BSWReward = multiplier.mul(BSWPerBlock);
-        BSW.mint(investoraddr, BSWReward.mul(investorPercent).div(percentDec));
-        BSW.mint(devaddr, BSWReward.mul(devPercent).div(percentDec));
-        BSW.mint(safuaddr, BSWReward.mul(safuPercent).div(percentDec));
-        BSW.mint(refaddr, BSWReward.mul(refPercent).div(percentDec));
+        uint256 GXOReward = multiplier.mul(GXOPerBlock);
+        GXO.mint(investoraddr, GXOReward.mul(investorPercent).div(percentDec));
+        GXO.mint(devaddr, GXOReward.mul(devPercent).div(percentDec));
+        GXO.mint(safuaddr, GXOReward.mul(safuPercent).div(percentDec));
+        GXO.mint(refaddr, GXOReward.mul(refPercent).div(percentDec));
         lastBlockWithdraw = block.number;
     }
 
@@ -185,11 +185,11 @@ contract InvestorMine is Ownable {
         emit updatedPercents(_investor, _dev, _ref, _safu);
     }
 
-    function updateBswPerBlock(uint256 newAmount) public onlyOwner {
-        require(newAmount <= 10 * 1e18, 'Max per block 10 BSW');
+    function updateGxoPerBlock(uint256 newAmount) public onlyOwner {
+        require(newAmount <= 10 * 1e18, 'Max per block 10 GXO');
         withdraw();
-        BSWPerBlock = newAmount;
-        emit updatedBswPerBlock(newAmount);
+        GXOPerBlock = newAmount;
+        emit updatedGxoPerBlock(newAmount);
     }
 
     function updateLastWithdrawBlock(uint256 _blockNumber) public onlyOwner {
