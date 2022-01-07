@@ -1,5 +1,5 @@
 const { expectRevert, time } = require('@openzeppelin/test-helpers');
-const { assert } = require('chai');
+const { assert, expect } = require('chai');
 const JSBI = require('jsbi')
 const CakeToken = artifacts.require('BSWToken');
 const MasterChef = artifacts.require('MasterChef');
@@ -15,11 +15,14 @@ contract('MasterChef', ([alice, bob, carol, dev, refFeeAddr, safuAddr, minter]) 
         this.lp1 = await MockBEP20.new('LPToken', 'LP1', '1000000', { from: minter });
         this.lp2 = await MockBEP20.new('LPToken', 'LP2', '1000000', { from: minter });
         this.lp3 = await MockBEP20.new('LPToken', 'LP3', '1000000', { from: minter });
-        this.lp4 = await MockBEP20.new('LPToken', 'LP4', '1000000', { from: minter });
+        // this.lp4 = await MockBEP20.new('LPToken', 'LP4', '1000000', { from: minter });
 
 
-        await this.cake.addMinter(minter, { from: minter });
+        //deploy Masterchef
         this.chef = await MasterChef.new(this.cake.address, dev, refFeeAddr, safuAddr, perBlock, '206', '1000', '857000', '100000', '43000', { from: minter });
+
+        // add minter
+        await this.cake.addMinter(minter, { from: minter });
         await this.cake.addMinter(this.chef.address, { from: minter });
         await this.cake.mint(alice, "1", { from: minter });
         //await this.cake.transferOwnership(this.chef.address, { from: minter });
@@ -40,20 +43,29 @@ contract('MasterChef', ([alice, bob, carol, dev, refFeeAddr, safuAddr, minter]) 
 
 
     });
-    it('real case', async () => {
 
+    it('should have pool info for cake', async () => {
+        expect((await this.chef.poolLength()).toString()).to.equal('1');
+    });
+
+    it('real case', async () => {
+        // add new LP
         await this.chef.add('1000', this.lp1.address, true, { from: minter });
+
         console.log('pools count', (await this.chef.poolLength()).toString());
 
         await time.advanceBlockTo('200');
-        //1 - lp
+        // alice aprove chef for lp1
         await this.lp1.approve(this.chef.address, '1000', { from: alice });
+        // alice aprove chef for cake
         await this.cake.approve(this.chef.address, '1000', { from: alice });
+
         // await this.lp1.approve(this.chef.address, '1000', { from: bob });
         // await this.lp1.approve(this.chef.address, '1000', { from: carol });
         console.log('----Deposit----');
-        await this.chef.deposit(1, '1', { from: alice });
-        await this.chef.enterStaking('1', { from: alice });
+        // alice deposit 1 lp1 in poolInfo[1] 
+        await this.chef.deposit(1, '1', { from: alice }); //staking lp token
+        await this.chef.enterStaking('1', { from: alice });// when staking cake to earn cake
         // await this.chef.deposit(1, '1', { from: bob });
         // await this.chef.deposit(1, '1', { from: carol });
         console.log('---------------');
@@ -61,11 +73,11 @@ contract('MasterChef', ([alice, bob, carol, dev, refFeeAddr, safuAddr, minter]) 
         await time.advanceBlockTo('206');
 
         console.log('---Withdraw---');
-        await this.chef.withdraw(1, '1', { from: alice });
+        await this.chef.withdraw(1, '1', { from: alice });//withdraw lp token
         let aliceBalance = await this.cake.balanceOf(alice);
         console.log('alise balance: ', aliceBalance.toString());
 
-        await this.chef.leaveStaking('1', { from: alice });
+        await this.chef.leaveStaking('1', { from: alice }); //unstake cake
         aliceBalance = await this.cake.balanceOf(alice);
         console.log('alise balance: ', aliceBalance.toString());
 
