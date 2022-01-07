@@ -46,8 +46,10 @@ contract('InvestorMine', ([devAddr, refFeeAddr, safuAddr, investorAddr, minter, 
         assert.equal(await this.investor.refPercent.call(), '43000');
         assert.equal(await this.investor.safuPercent.call(), '10000');
 
-        await this.investor.updateLastWithdrawBlock('8', { from: minter });
-        assert.equal(await this.investor.lastBlockWithdraw.call(), '8');
+        console.log((await time.latestBlock()).toString());
+
+        // await this.investor.updateLastWithdrawBlock('9', { from: minter });
+        // assert.equal(await this.investor.lastBlockWithdraw.call(), '9');
 
         await time.advanceBlockTo('99');
 
