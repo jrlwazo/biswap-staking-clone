@@ -1,5 +1,6 @@
 usePlugin("@nomiclabs/buidler-waffle");
 usePlugin("solidity-coverage");
+usePlugin("@nomiclabs/buidler-truffle5");
 
 // This is a sample Buidler task. To learn how to create your own go to
 // https://buidler.dev/guides/create-task.html
@@ -11,7 +12,7 @@ task("accounts", "Prints the list of accounts", async () => {
   }
 });
 
-usePlugin("@nomiclabs/buidler-truffle5");
+
 
 // You have to export an object to set up your config
 // This object can have the following optional entries:
