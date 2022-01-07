@@ -71,7 +71,7 @@
           "type": "address"
         }
       ],
-      "name": "pendingBSW",
+      "name": "pendingGXO",
       "outputs": [
         {
           "internalType": "uint256",
