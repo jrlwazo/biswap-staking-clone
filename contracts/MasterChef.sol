@@ -1,4 +1,6 @@
+//SPDX-License-Identifier:MIT
 pragma solidity 0.6.12;
+
 library SafeBEP20 {
     using SafeMath for uint256;
     using Address for address;
@@ -8,7 +10,10 @@ library SafeBEP20 {
         address to,
         uint256 value
     ) internal {
-        _callOptionalReturn(token, abi.encodeWithSelector(token.transfer.selector, to, value));
+        _callOptionalReturn(
+            token,
+            abi.encodeWithSelector(token.transfer.selector, to, value)
+        );
     }
 
     function safeTransferFrom(
@@ -17,7 +22,10 @@ library SafeBEP20 {
         address to,
         uint256 value
     ) internal {
-        _callOptionalReturn(token, abi.encodeWithSelector(token.transferFrom.selector, from, to, value));
+        _callOptionalReturn(
+            token,
+            abi.encodeWithSelector(token.transferFrom.selector, from, to, value)
+        );
     }
 
     /**
@@ -38,9 +46,12 @@ library SafeBEP20 {
         // solhint-disable-next-line max-line-length
         require(
             (value == 0) || (token.allowance(address(this), spender) == 0),
-            'SafeBEP20: approve from non-zero to non-zero allowance'
+            "SafeBEP20: approve from non-zero to non-zero allowance"
         );
-        _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, value));
+        _callOptionalReturn(
+            token,
+            abi.encodeWithSelector(token.approve.selector, spender, value)
+        );
     }
 
     function safeIncreaseAllowance(
@@ -48,8 +59,17 @@ library SafeBEP20 {
         address spender,
         uint256 value
     ) internal {
-        uint256 newAllowance = token.allowance(address(this), spender).add(value);
-        _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, newAllowance));
+        uint256 newAllowance = token.allowance(address(this), spender).add(
+            value
+        );
+        _callOptionalReturn(
+            token,
+            abi.encodeWithSelector(
+                token.approve.selector,
+                spender,
+                newAllowance
+            )
+        );
     }
 
     function safeDecreaseAllowance(
@@ -59,9 +79,16 @@ library SafeBEP20 {
     ) internal {
         uint256 newAllowance = token.allowance(address(this), spender).sub(
             value,
-            'SafeBEP20: decreased allowance below zero'
+            "SafeBEP20: decreased allowance below zero"
         );
-        _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, newAllowance));
+        _callOptionalReturn(
+            token,
+            abi.encodeWithSelector(
+                token.approve.selector,
+                spender,
+                newAllowance
+            )
+        );
     }
 
     /**
@@ -75,14 +102,21 @@ library SafeBEP20 {
         // we're implementing it ourselves. We use {Address.functionCall} to perform this call, which verifies that
         // the target address contains contract code and also asserts for success in the low-level call.
 
-        bytes memory returndata = address(token).functionCall(data, 'SafeBEP20: low-level call failed');
+        bytes memory returndata = address(token).functionCall(
+            data,
+            "SafeBEP20: low-level call failed"
+        );
         if (returndata.length > 0) {
             // Return data is optional
             // solhint-disable-next-line max-line-length
-            require(abi.decode(returndata, (bool)), 'SafeBEP20: BEP20 operation did not succeed');
+            require(
+                abi.decode(returndata, (bool)),
+                "SafeBEP20: BEP20 operation did not succeed"
+            );
         }
     }
 }
+
 import "./BSWToken.sol";
 
 interface IMigratorChef {
@@ -190,18 +224,18 @@ contract MasterChef is Ownable {
         refPercent = _refPercent;
         safuPercent = _safuPercent;
         lastBlockDevWithdraw = _startBlock;
-        
-        
+
         // staking pool
-        poolInfo.push(PoolInfo({
-            lpToken: _BSW,
-            allocPoint: 1000,
-            lastRewardBlock: startBlock,
-            accBSWPerShare: 0
-        }));
+        poolInfo.push(
+            PoolInfo({
+                lpToken: _BSW,
+                allocPoint: 1000,
+                lastRewardBlock: startBlock,
+                accBSWPerShare: 0
+            })
+        );
 
         totalAllocPoint = 1000;
-
     }
 
     function updateMultiplier(uint256 multiplierNumber) public onlyOwner {
@@ -212,8 +246,8 @@ contract MasterChef is Ownable {
         return poolInfo.length;
     }
 
-    function withdrawDevAndRefFee() public{
-        require(lastBlockDevWithdraw < block.number, 'wait for new block');
+    function withdrawDevAndRefFee() public {
+        require(lastBlockDevWithdraw < block.number, "wait for new block");
         uint256 multiplier = getMultiplier(lastBlockDevWithdraw, block.number);
         uint256 BSWReward = multiplier.mul(BSWPerBlock);
         BSW.mint(devaddr, BSWReward.mul(devPercent).div(percentDec));
@@ -224,11 +258,17 @@ contract MasterChef is Ownable {
 
     // Add a new lp to the pool. Can only be called by the owner.
     // XXX DO NOT add the same LP token more than once. Rewards will be messed up if you do.
-    function add( uint256 _allocPoint, IBEP20 _lpToken, bool _withUpdate ) public onlyOwner {
+    function add(
+        uint256 _allocPoint,
+        IBEP20 _lpToken,
+        bool _withUpdate
+    ) public onlyOwner {
         if (_withUpdate) {
             massUpdatePools();
         }
-        uint256 lastRewardBlock = block.number > startBlock ? block.number : startBlock;
+        uint256 lastRewardBlock = block.number > startBlock
+            ? block.number
+            : startBlock;
         totalAllocPoint = totalAllocPoint.add(_allocPoint);
         poolInfo.push(
             PoolInfo({
@@ -241,11 +281,17 @@ contract MasterChef is Ownable {
     }
 
     // Update the given pool's BSW allocation point. Can only be called by the owner.
-    function set( uint256 _pid, uint256 _allocPoint, bool _withUpdate) public onlyOwner {
+    function set(
+        uint256 _pid,
+        uint256 _allocPoint,
+        bool _withUpdate
+    ) public onlyOwner {
         if (_withUpdate) {
             massUpdatePools();
         }
-        totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(_allocPoint);
+        totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(
+            _allocPoint
+        );
         poolInfo[_pid].allocPoint = _allocPoint;
     }
 
@@ -267,23 +313,41 @@ contract MasterChef is Ownable {
     }
 
     // Return reward multiplier over the given _from to _to block.
-    function getMultiplier(uint256 _from, uint256 _to) public view returns (uint256) {
-         return _to.sub(_from).mul(BONUS_MULTIPLIER);
+    function getMultiplier(uint256 _from, uint256 _to)
+        public
+        view
+        returns (uint256)
+    {
+        return _to.sub(_from).mul(BONUS_MULTIPLIER);
     }
 
     // View function to see pending BSWs on frontend.
-    function pendingBSW(uint256 _pid, address _user) external view returns (uint256){
+    function pendingBSW(uint256 _pid, address _user)
+        external
+        view
+        returns (uint256)
+    {
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][_user];
         uint256 accBSWPerShare = pool.accBSWPerShare;
         uint256 lpSupply = pool.lpToken.balanceOf(address(this));
-        if (_pid == 0){
+        if (_pid == 0) {
             lpSupply = depositedBsw;
         }
         if (block.number > pool.lastRewardBlock && lpSupply != 0) {
-            uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-            uint256 BSWReward = multiplier.mul(BSWPerBlock).mul(pool.allocPoint).div(totalAllocPoint).mul(stakingPercent).div(percentDec);
-            accBSWPerShare = accBSWPerShare.add(BSWReward.mul(1e12).div(lpSupply));
+            uint256 multiplier = getMultiplier(
+                pool.lastRewardBlock,
+                block.number
+            );
+            uint256 BSWReward = multiplier
+                .mul(BSWPerBlock)
+                .mul(pool.allocPoint)
+                .div(totalAllocPoint)
+                .mul(stakingPercent)
+                .div(percentDec);
+            accBSWPerShare = accBSWPerShare.add(
+                BSWReward.mul(1e12).div(lpSupply)
+            );
         }
         return user.amount.mul(accBSWPerShare).div(1e12).sub(user.rewardDebt);
     }
@@ -303,7 +367,7 @@ contract MasterChef is Ownable {
             return;
         }
         uint256 lpSupply = pool.lpToken.balanceOf(address(this));
-        if (_pid == 0){
+        if (_pid == 0) {
             lpSupply = depositedBsw;
         }
         if (lpSupply <= 0) {
@@ -311,25 +375,39 @@ contract MasterChef is Ownable {
             return;
         }
         uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-        uint256 BSWReward = multiplier.mul(BSWPerBlock).mul(pool.allocPoint).div(totalAllocPoint).mul(stakingPercent).div(percentDec);
+        uint256 BSWReward = multiplier
+            .mul(BSWPerBlock)
+            .mul(pool.allocPoint)
+            .div(totalAllocPoint)
+            .mul(stakingPercent)
+            .div(percentDec);
         BSW.mint(address(this), BSWReward);
-        pool.accBSWPerShare = pool.accBSWPerShare.add(BSWReward.mul(1e12).div(lpSupply));
+        pool.accBSWPerShare = pool.accBSWPerShare.add(
+            BSWReward.mul(1e12).div(lpSupply)
+        );
         pool.lastRewardBlock = block.number;
     }
 
     // Deposit LP tokens to MasterChef for BSW allocation.
     function deposit(uint256 _pid, uint256 _amount) public {
-
-        require (_pid != 0, 'deposit BSW by staking');
+        require(_pid != 0, "deposit BSW by staking");
 
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
         updatePool(_pid);
         if (user.amount > 0) {
-            uint256 pending = user.amount.mul(pool.accBSWPerShare).div(1e12).sub(user.rewardDebt);
+            uint256 pending = user
+                .amount
+                .mul(pool.accBSWPerShare)
+                .div(1e12)
+                .sub(user.rewardDebt);
             safeBSWTransfer(msg.sender, pending);
         }
-        pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
+        pool.lpToken.safeTransferFrom(
+            address(msg.sender),
+            address(this),
+            _amount
+        );
         user.amount = user.amount.add(_amount);
         user.rewardDebt = user.amount.mul(pool.accBSWPerShare).div(1e12);
         emit Deposit(msg.sender, _pid, _amount);
@@ -337,14 +415,15 @@ contract MasterChef is Ownable {
 
     // Withdraw LP tokens from MasterChef.
     function withdraw(uint256 _pid, uint256 _amount) public {
-
-        require (_pid != 0, 'withdraw BSW by unstaking');
+        require(_pid != 0, "withdraw BSW by unstaking");
 
         PoolInfo storage pool = poolInfo[_pid];
         UserInfo storage user = userInfo[_pid][msg.sender];
         require(user.amount >= _amount, "withdraw: not good");
         updatePool(_pid);
-        uint256 pending = user.amount.mul(pool.accBSWPerShare).div(1e12).sub(user.rewardDebt);
+        uint256 pending = user.amount.mul(pool.accBSWPerShare).div(1e12).sub(
+            user.rewardDebt
+        );
         safeBSWTransfer(msg.sender, pending);
         user.amount = user.amount.sub(_amount);
         user.rewardDebt = user.amount.mul(pool.accBSWPerShare).div(1e12);
@@ -352,19 +431,27 @@ contract MasterChef is Ownable {
         emit Withdraw(msg.sender, _pid, _amount);
     }
 
-        // Stake BSW tokens to MasterChef
+    // Stake BSW tokens to MasterChef
     function enterStaking(uint256 _amount) public {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[0][msg.sender];
         updatePool(0);
         if (user.amount > 0) {
-            uint256 pending = user.amount.mul(pool.accBSWPerShare).div(1e12).sub(user.rewardDebt);
-            if(pending > 0) {
+            uint256 pending = user
+                .amount
+                .mul(pool.accBSWPerShare)
+                .div(1e12)
+                .sub(user.rewardDebt);
+            if (pending > 0) {
                 safeBSWTransfer(msg.sender, pending);
             }
         }
-        if(_amount > 0) {
-            pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
+        if (_amount > 0) {
+            pool.lpToken.safeTransferFrom(
+                address(msg.sender),
+                address(this),
+                _amount
+            );
             user.amount = user.amount.add(_amount);
             depositedBsw = depositedBsw.add(_amount);
         }
@@ -378,11 +465,13 @@ contract MasterChef is Ownable {
         UserInfo storage user = userInfo[0][msg.sender];
         require(user.amount >= _amount, "withdraw: not good");
         updatePool(0);
-        uint256 pending = user.amount.mul(pool.accBSWPerShare).div(1e12).sub(user.rewardDebt);
-        if(pending > 0) {
+        uint256 pending = user.amount.mul(pool.accBSWPerShare).div(1e12).sub(
+            user.rewardDebt
+        );
+        if (pending > 0) {
             safeBSWTransfer(msg.sender, pending);
         }
-        if(_amount > 0) {
+        if (_amount > 0) {
             user.amount = user.amount.sub(_amount);
             pool.lpToken.safeTransfer(address(msg.sender), _amount);
             depositedBsw = depositedBsw.sub(_amount);
@@ -411,19 +500,21 @@ contract MasterChef is Ownable {
         }
     }
 
-    
     function setDevAddress(address _devaddr) public onlyOwner {
         devaddr = _devaddr;
     }
+
     function setRefAddress(address _refaddr) public onlyOwner {
         refAddr = _refaddr;
     }
-    function setSafuAddress(address _safuaddr) public onlyOwner{
+
+    function setSafuAddress(address _safuaddr) public onlyOwner {
         safuaddr = _safuaddr;
     }
+
     function updateBswPerBlock(uint256 newAmount) public onlyOwner {
-        require(newAmount <= 30 * 1e18, 'Max per block 30 BSW');
-        require(newAmount >= 1 * 1e18, 'Min per block 1 BSW');
+        require(newAmount <= 30 * 1e18, "Max per block 30 BSW");
+        require(newAmount >= 1 * 1e18, "Min per block 1 BSW");
         BSWPerBlock = newAmount;
     }
 }

@@ -4,9 +4,9 @@ const InvestorMine = artifacts.require('InvestorMine');
 
 const perBlock = '1633604000000000000';
 
-contract('MasterChef', ([devAddr, refFeeAddr, safuAddr, investorAddr, minter, test]) => {
+contract('InvestorMine', ([devAddr, refFeeAddr, safuAddr, investorAddr, minter, test]) => {//address,address,address,address,uint,uint
     beforeEach(async () => {
-        this.bsw  = await BSWToken.new({ from: minter });
+        this.bsw = await BSWToken.new({ from: minter });
         this.investor = await InvestorMine.new(this.bsw.address, devAddr, refFeeAddr, safuAddr, investorAddr, perBlock, '0', { from: minter });
 
         await this.bsw.addMinter(this.investor.address, { from: minter });

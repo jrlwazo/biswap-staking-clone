@@ -6,8 +6,10 @@ const MasterChef = artifacts.require('MasterChef');
 const MockBEP20 = artifacts.require('libs/MockBEP20');
 let perBlock = '30000000000000000000';
 const delay = ms => new Promise(res => setTimeout(res, ms));
-contract('MasterChef', ([alice, bob, carol, dev, refFeeAddr, minter]) => {
+
+contract('MasterChef', ([alice, bob, carol, dev, refFeeAddr, safuAddr,minter]) => {
     beforeEach(async () => {
+        //deploy 
         this.cake = await CakeToken.new({ from: minter });
     
         this.lp1 = await MockBEP20.new('LPToken', 'LP1', '1000000', { from: minter });
@@ -17,7 +19,7 @@ contract('MasterChef', ([alice, bob, carol, dev, refFeeAddr, minter]) => {
         
         
         await this.cake.addMinter(minter, { from: minter });
-        this.chef = await MasterChef.new(this.cake.address, dev, refFeeAddr, perBlock, '206', '1000', '857000', '100000', '43000', { from: minter });
+        this.chef = await MasterChef.new(this.cake.address, dev, refFeeAddr,safuAddr, perBlock, '206', '1000', '857000', '100000', '43000', { from: minter });
         await this.cake.addMinter(this.chef.address, { from: minter });
         await this.cake.mint(alice, "1", { from: minter });
         //await this.cake.transferOwnership(this.chef.address, { from: minter });

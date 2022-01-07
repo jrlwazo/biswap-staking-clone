@@ -1,6 +1,9 @@
+//SPDX-License-Identifier:MIT
 pragma solidity 0.6.12;
 
-import "@biswap/biswap-core-libs/contracts/token/BEP20/BEP20.sol";
+// import "@biswap/biswap-core-libs/contracts/token/BEP20/BEP20.sol";
+
+import "./BEP20.sol";
 
 contract MockBEP20 is BEP20 {
     constructor(
@@ -9,6 +12,5 @@ contract MockBEP20 is BEP20 {
         uint256 supply
     ) public BEP20(name, symbol) {
         _mint(msg.sender, supply);
-
     }
 }

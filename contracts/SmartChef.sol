@@ -1,3 +1,5 @@
+//SPDX-License-Identifier:MIT
+
 pragma solidity 0.6.12;
 
 library SafeMath {
@@ -13,7 +15,7 @@ library SafeMath {
      */
     function add(uint256 a, uint256 b) internal pure returns (uint256) {
         uint256 c = a + b;
-        require(c >= a, 'SafeMath: addition overflow');
+        require(c >= a, "SafeMath: addition overflow");
 
         return c;
     }
@@ -29,7 +31,7 @@ library SafeMath {
      * - Subtraction cannot overflow.
      */
     function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-        return sub(a, b, 'SafeMath: subtraction overflow');
+        return sub(a, b, "SafeMath: subtraction overflow");
     }
 
     /**
@@ -72,7 +74,7 @@ library SafeMath {
         }
 
         uint256 c = a * b;
-        require(c / a == b, 'SafeMath: multiplication overflow');
+        require(c / a == b, "SafeMath: multiplication overflow");
 
         return c;
     }
@@ -90,7 +92,7 @@ library SafeMath {
      * - The divisor cannot be zero.
      */
     function div(uint256 a, uint256 b) internal pure returns (uint256) {
-        return div(a, b, 'SafeMath: division by zero');
+        return div(a, b, "SafeMath: division by zero");
     }
 
     /**
@@ -130,7 +132,7 @@ library SafeMath {
      * - The divisor cannot be zero.
      */
     function mod(uint256 a, uint256 b) internal pure returns (uint256) {
-        return mod(a, b, 'SafeMath: modulo by zero');
+        return mod(a, b, "SafeMath: modulo by zero");
     }
 
     /**
@@ -172,6 +174,7 @@ library SafeMath {
         }
     }
 }
+
 interface IBEP20 {
     /**
      * @dev Returns the amount of tokens in existence.
@@ -210,7 +213,9 @@ interface IBEP20 {
      *
      * Emits a {Transfer} event.
      */
-    function transfer(address recipient, uint256 amount) external returns (bool);
+    function transfer(address recipient, uint256 amount)
+        external
+        returns (bool);
 
     /**
      * @dev Returns the remaining number of tokens that `spender` will be
@@ -219,7 +224,10 @@ interface IBEP20 {
      *
      * This value changes when {approve} or {transferFrom} are called.
      */
-    function allowance(address _owner, address spender) external view returns (uint256);
+    function allowance(address _owner, address spender)
+        external
+        view
+        returns (uint256);
 
     /**
      * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.
@@ -264,8 +272,13 @@ interface IBEP20 {
      * @dev Emitted when the allowance of a `spender` for an `owner` is set by
      * a call to {approve}. `value` is the new allowance.
      */
-    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
 }
+
 library Address {
     /**
      * @dev Returns true if `account` is a contract.
@@ -314,11 +327,17 @@ library Address {
      * https://solidity.readthedocs.io/en/v0.5.11/security-considerations.html#use-the-checks-effects-interactions-pattern[checks-effects-interactions pattern].
      */
     function sendValue(address payable recipient, uint256 amount) internal {
-        require(address(this).balance >= amount, 'Address: insufficient balance');
+        require(
+            address(this).balance >= amount,
+            "Address: insufficient balance"
+        );
 
         // solhint-disable-next-line avoid-low-level-calls, avoid-call-value
-        (bool success, ) = recipient.call{value: amount}('');
-        require(success, 'Address: unable to send value, recipient may have reverted');
+        (bool success, ) = recipient.call{value: amount}("");
+        require(
+            success,
+            "Address: unable to send value, recipient may have reverted"
+        );
     }
 
     /**
@@ -339,8 +358,11 @@ library Address {
      *
      * _Available since v3.1._
      */
-    function functionCall(address target, bytes memory data) internal returns (bytes memory) {
-        return functionCall(target, data, 'Address: low-level call failed');
+    function functionCall(address target, bytes memory data)
+        internal
+        returns (bytes memory)
+    {
+        return functionCall(target, data, "Address: low-level call failed");
     }
 
     /**
@@ -373,7 +395,13 @@ library Address {
         bytes memory data,
         uint256 value
     ) internal returns (bytes memory) {
-        return functionCallWithValue(target, data, value, 'Address: low-level call with value failed');
+        return
+            functionCallWithValue(
+                target,
+                data,
+                value,
+                "Address: low-level call with value failed"
+            );
     }
 
     /**
@@ -388,7 +416,10 @@ library Address {
         uint256 value,
         string memory errorMessage
     ) internal returns (bytes memory) {
-        require(address(this).balance >= value, 'Address: insufficient balance for call');
+        require(
+            address(this).balance >= value,
+            "Address: insufficient balance for call"
+        );
         return _functionCallWithValue(target, data, value, errorMessage);
     }
 
@@ -398,10 +429,12 @@ library Address {
         uint256 weiValue,
         string memory errorMessage
     ) private returns (bytes memory) {
-        require(isContract(target), 'Address: call to non-contract');
+        require(isContract(target), "Address: call to non-contract");
 
         // solhint-disable-next-line avoid-low-level-calls
-        (bool success, bytes memory returndata) = target.call{value: weiValue}(data);
+        (bool success, bytes memory returndata) = target.call{value: weiValue}(
+            data
+        );
         if (success) {
             return returndata;
         } else {
@@ -420,6 +453,7 @@ library Address {
         }
     }
 }
+
 /**
  * @title SafeBEP20
  * @dev Wrappers around BEP20 operations that throw on failure (when the token
@@ -438,7 +472,10 @@ library SafeBEP20 {
         address to,
         uint256 value
     ) internal {
-        _callOptionalReturn(token, abi.encodeWithSelector(token.transfer.selector, to, value));
+        _callOptionalReturn(
+            token,
+            abi.encodeWithSelector(token.transfer.selector, to, value)
+        );
     }
 
     function safeTransferFrom(
@@ -447,7 +484,10 @@ library SafeBEP20 {
         address to,
         uint256 value
     ) internal {
-        _callOptionalReturn(token, abi.encodeWithSelector(token.transferFrom.selector, from, to, value));
+        _callOptionalReturn(
+            token,
+            abi.encodeWithSelector(token.transferFrom.selector, from, to, value)
+        );
     }
 
     /**
@@ -468,9 +508,12 @@ library SafeBEP20 {
         // solhint-disable-next-line max-line-length
         require(
             (value == 0) || (token.allowance(address(this), spender) == 0),
-            'SafeBEP20: approve from non-zero to non-zero allowance'
+            "SafeBEP20: approve from non-zero to non-zero allowance"
         );
-        _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, value));
+        _callOptionalReturn(
+            token,
+            abi.encodeWithSelector(token.approve.selector, spender, value)
+        );
     }
 
     function safeIncreaseAllowance(
@@ -478,8 +521,17 @@ library SafeBEP20 {
         address spender,
         uint256 value
     ) internal {
-        uint256 newAllowance = token.allowance(address(this), spender).add(value);
-        _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, newAllowance));
+        uint256 newAllowance = token.allowance(address(this), spender).add(
+            value
+        );
+        _callOptionalReturn(
+            token,
+            abi.encodeWithSelector(
+                token.approve.selector,
+                spender,
+                newAllowance
+            )
+        );
     }
 
     function safeDecreaseAllowance(
@@ -489,9 +541,16 @@ library SafeBEP20 {
     ) internal {
         uint256 newAllowance = token.allowance(address(this), spender).sub(
             value,
-            'SafeBEP20: decreased allowance below zero'
+            "SafeBEP20: decreased allowance below zero"
         );
-        _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, newAllowance));
+        _callOptionalReturn(
+            token,
+            abi.encodeWithSelector(
+                token.approve.selector,
+                spender,
+                newAllowance
+            )
+        );
     }
 
     /**
@@ -505,14 +564,21 @@ library SafeBEP20 {
         // we're implementing it ourselves. We use {Address.functionCall} to perform this call, which verifies that
         // the target address contains contract code and also asserts for success in the low-level call.
 
-        bytes memory returndata = address(token).functionCall(data, 'SafeBEP20: low-level call failed');
+        bytes memory returndata = address(token).functionCall(
+            data,
+            "SafeBEP20: low-level call failed"
+        );
         if (returndata.length > 0) {
             // Return data is optional
             // solhint-disable-next-line max-line-length
-            require(abi.decode(returndata, (bool)), 'SafeBEP20: BEP20 operation did not succeed');
+            require(
+                abi.decode(returndata, (bool)),
+                "SafeBEP20: BEP20 operation did not succeed"
+            );
         }
     }
 }
+
 contract Context {
     // Empty internal constructor, to prevent people from mistakenly deploying
     // an instance of this contract, which should be used via inheritance.
@@ -527,6 +593,7 @@ contract Context {
         return msg.data;
     }
 }
+
 /**
  * @dev Contract module which provides a basic access control mechanism, where
  * there is an account (an owner) that can be granted exclusive access to
@@ -542,7 +609,10 @@ contract Context {
 contract Ownable is Context {
     address private _owner;
 
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+    event OwnershipTransferred(
+        address indexed previousOwner,
+        address indexed newOwner
+    );
 
     /**
      * @dev Initializes the contract setting the deployer as the initial owner.
@@ -564,7 +634,7 @@ contract Ownable is Context {
      * @dev Throws if called by any account other than the owner.
      */
     modifier onlyOwner() {
-        require(_owner == _msgSender(), 'Ownable: caller is not the owner');
+        require(_owner == _msgSender(), "Ownable: caller is not the owner");
         _;
     }
 
@@ -592,7 +662,10 @@ contract Ownable is Context {
      * @dev Transfers ownership of the contract to a new account (`newOwner`).
      */
     function _transferOwnership(address newOwner) internal {
-        require(newOwner != address(0), 'Ownable: new owner is the zero address');
+        require(
+            newOwner != address(0),
+            "Ownable: new owner is the zero address"
+        );
         emit OwnershipTransferred(_owner, newOwner);
         _owner = newOwner;
     }
@@ -604,16 +677,16 @@ contract SmartChef is Ownable {
 
     // Info of each user.
     struct UserInfo {
-        uint256 amount;     // How many LP tokens the user has provided.
+        uint256 amount; // How many LP tokens the user has provided.
         uint256 rewardDebt; // Reward debt. See explanation below.
     }
 
     // Info of each pool.
     struct PoolInfo {
-        IBEP20 lpToken;           // Address of LP token contract.
-        uint256 allocPoint;       // How many allocation points assigned to this pool. BSWs to distribute per block.
-        uint256 lastRewardBlock;  // Last block number that BSWs distribution occurs.
-        uint256 accBSWPerShare;   // Accumulated BSWs per share, times PRECISION_FACTOR. See below.
+        IBEP20 lpToken; // Address of LP token contract.
+        uint256 allocPoint; // How many allocation points assigned to this pool. BSWs to distribute per block.
+        uint256 lastRewardBlock; // Last block number that BSWs distribution occurs.
+        uint256 accBSWPerShare; // Accumulated BSWs per share, times PRECISION_FACTOR. See below.
     }
 
     // The BSW TOKEN!
@@ -626,7 +699,7 @@ contract SmartChef is Ownable {
     // Info of each pool.
     PoolInfo[] public poolInfo;
     // Info of each user that stakes LP tokens.
-    mapping (address => UserInfo) public userInfo;
+    mapping(address => UserInfo) public userInfo;
     // Total allocation points. Must be the sum of all allocation points in all pools.
     uint256 public totalAllocPoint = 0;
     // The block number when BSW mining starts.
@@ -657,19 +730,20 @@ contract SmartChef is Ownable {
         startBlock = _startBlock;
         bonusEndBlock = _bonusEndBlock;
 
-
         uint256 decimalsRewardToken = uint256(rewardToken.decimals());
         require(decimalsRewardToken < 30, "Must be inferior to 30");
 
         PRECISION_FACTOR = uint256(10**(uint256(30).sub(decimalsRewardToken)));
 
         // staking pool
-        poolInfo.push(PoolInfo({
-            lpToken: _bsw,
-            allocPoint: 1000,
-            lastRewardBlock: startBlock,
-            accBSWPerShare: 0
-        }));
+        poolInfo.push(
+            PoolInfo({
+                lpToken: _bsw,
+                allocPoint: 1000,
+                lastRewardBlock: startBlock,
+                accBSWPerShare: 0
+            })
+        );
         totalAllocPoint = 1000;
     }
 
@@ -679,15 +753,19 @@ contract SmartChef is Ownable {
     }
 
     // Return remaining limit amount
-    function remainingLimitAmount() public view returns(uint256) {
-        if (userInfo[msg.sender].amount >= limitAmount){
+    function remainingLimitAmount() public view returns (uint256) {
+        if (userInfo[msg.sender].amount >= limitAmount) {
             return 0;
         }
         return limitAmount.sub(userInfo[msg.sender].amount);
     }
 
     // Return reward multiplier over the given _from to _to block.
-    function getMultiplier(uint256 _from, uint256 _to) public view returns (uint256) {
+    function getMultiplier(uint256 _from, uint256 _to)
+        public
+        view
+        returns (uint256)
+    {
         if (_to <= bonusEndBlock) {
             return _to.sub(_from);
         } else if (_from >= bonusEndBlock) {
@@ -704,11 +782,22 @@ contract SmartChef is Ownable {
         uint256 accBSWPerShare = pool.accBSWPerShare;
         uint256 lpSupply = pool.lpToken.balanceOf(address(this));
         if (block.number > pool.lastRewardBlock && lpSupply != 0) {
-            uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-            uint256 BSWReward = multiplier.mul(rewardPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
-            accBSWPerShare = accBSWPerShare.add(BSWReward.mul(PRECISION_FACTOR).div(lpSupply));
+            uint256 multiplier = getMultiplier(
+                pool.lastRewardBlock,
+                block.number
+            );
+            uint256 BSWReward = multiplier
+                .mul(rewardPerBlock)
+                .mul(pool.allocPoint)
+                .div(totalAllocPoint);
+            accBSWPerShare = accBSWPerShare.add(
+                BSWReward.mul(PRECISION_FACTOR).div(lpSupply)
+            );
         }
-        return user.amount.mul(accBSWPerShare).div(PRECISION_FACTOR).sub(user.rewardDebt);
+        return
+            user.amount.mul(accBSWPerShare).div(PRECISION_FACTOR).sub(
+                user.rewardDebt
+            );
     }
 
     // Update reward variables of the given pool to be up-to-date.
@@ -723,8 +812,13 @@ contract SmartChef is Ownable {
             return;
         }
         uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-        uint256 BSWReward = multiplier.mul(rewardPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
-        pool.accBSWPerShare = pool.accBSWPerShare.add(BSWReward.mul(PRECISION_FACTOR).div(lpSupply));
+        uint256 BSWReward = multiplier
+            .mul(rewardPerBlock)
+            .mul(pool.allocPoint)
+            .div(totalAllocPoint);
+        pool.accBSWPerShare = pool.accBSWPerShare.add(
+            BSWReward.mul(PRECISION_FACTOR).div(lpSupply)
+        );
         pool.lastRewardBlock = block.number;
     }
 
@@ -736,27 +830,35 @@ contract SmartChef is Ownable {
         }
     }
 
-
     // Stake biswap tokens to SmartChef
     function deposit(uint256 _amount) public {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
 
-        require(user.amount.add(_amount) <= limitAmount, 'Exceed limit amount');
+        require(user.amount.add(_amount) <= limitAmount, "Exceed limit amount");
 
         updatePool(0);
         if (user.amount > 0) {
-            uint256 pending = user.amount.mul(pool.accBSWPerShare).div(PRECISION_FACTOR).sub(user.rewardDebt);
-            if(pending > 0) {
+            uint256 pending = user
+                .amount
+                .mul(pool.accBSWPerShare)
+                .div(PRECISION_FACTOR)
+                .sub(user.rewardDebt);
+            if (pending > 0) {
                 rewardToken.safeTransfer(address(msg.sender), pending);
             }
         }
-        if(_amount > 0) {
-            pool.lpToken.safeTransferFrom(address(msg.sender), address(this), _amount);
+        if (_amount > 0) {
+            pool.lpToken.safeTransferFrom(
+                address(msg.sender),
+                address(this),
+                _amount
+            );
             user.amount = user.amount.add(_amount);
         }
-        user.rewardDebt = user.amount.mul(pool.accBSWPerShare).div(PRECISION_FACTOR);
-
+        user.rewardDebt = user.amount.mul(pool.accBSWPerShare).div(
+            PRECISION_FACTOR
+        );
 
         emit Deposit(msg.sender, _amount);
     }
@@ -767,15 +869,21 @@ contract SmartChef is Ownable {
         UserInfo storage user = userInfo[msg.sender];
         require(user.amount >= _amount, "withdraw: not good");
         updatePool(0);
-        uint256 pending = user.amount.mul(pool.accBSWPerShare).div(PRECISION_FACTOR).sub(user.rewardDebt);
-        if(pending > 0) {
+        uint256 pending = user
+            .amount
+            .mul(pool.accBSWPerShare)
+            .div(PRECISION_FACTOR)
+            .sub(user.rewardDebt);
+        if (pending > 0) {
             rewardToken.safeTransfer(address(msg.sender), pending);
         }
-        if(_amount > 0) {
+        if (_amount > 0) {
             user.amount = user.amount.sub(_amount);
             pool.lpToken.safeTransfer(address(msg.sender), _amount);
         }
-        user.rewardDebt = user.amount.mul(pool.accBSWPerShare).div(PRECISION_FACTOR);
+        user.rewardDebt = user.amount.mul(pool.accBSWPerShare).div(
+            PRECISION_FACTOR
+        );
 
         emit Withdraw(msg.sender, _amount);
     }
@@ -787,7 +895,7 @@ contract SmartChef is Ownable {
         uint256 amountToTransfer = user.amount;
         user.amount = 0;
         user.rewardDebt = 0;
-        if (amountToTransfer > 0){
+        if (amountToTransfer > 0) {
             pool.lpToken.safeTransfer(address(msg.sender), amountToTransfer);
         }
         emit EmergencyWithdraw(msg.sender, amountToTransfer);
@@ -795,8 +903,10 @@ contract SmartChef is Ownable {
 
     // Withdraw reward. EMERGENCY ONLY.
     function emergencyRewardWithdraw(uint256 _amount) public onlyOwner {
-        require(_amount <= rewardToken.balanceOf(address(this)), 'not enough token');
+        require(
+            _amount <= rewardToken.balanceOf(address(this)),
+            "not enough token"
+        );
         rewardToken.safeTransfer(address(msg.sender), _amount);
     }
-
 }
