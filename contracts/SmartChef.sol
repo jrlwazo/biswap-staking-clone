@@ -670,7 +670,11 @@ contract Ownable is Context {
         _owner = newOwner;
     }
 }
-
+/**
+ * @dev Contract that allows staking of BSW to receive BEP20Token reward.
+ *
+ * 
+ */
 contract SmartChef is Ownable {
     using SafeMath for uint256;
     using SafeBEP20 for IBEP20;
