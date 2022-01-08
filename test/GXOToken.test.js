@@ -26,8 +26,8 @@ contract('GXOToken', ([alice, bob, carol, dev, refFeeAddr, safuAddr, minter]) =>
         expect((await this.gxo.name()).toString()).to.be.equal("Geometry");
         assert.equal(await this.gxo.symbol(), 'GXO');
     });
-    it('should have a minter with valid address', async () => {
-        expect((await this.gxo.getMinter(0, { from: minter }))).to.be.properAddress;
+    it('should have a minter address as minter', async () => {
+        assert.equal((await this.gxo.getMinter(0, { from: minter })).toString(), minter.toString());
 
     });
     it('alice should have 10 GXO tokens', async () => {
