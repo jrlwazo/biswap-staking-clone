@@ -5,6 +5,7 @@
   "scripts": {
     "migrate": "truffle migrate --network bscTestnet --reset",
     "compile": "truffle compile --network bscTestnet",
+    "test-gxo": "npx builder test test/GXOToken.test.js",
     "test": "npx builder test",
     "coverage": "npx builder coverage"
   },
