@@ -1,15 +1,13 @@
 //SPDX-License-Identifier:MIT
-pragma solidity >=0.8.10;
+pragma solidity >=0.8.0;
 
 import "./libs/BEP20.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
 
 // Geometry token with Governance.
 contract GXOToken is BEP20("Geometry", "GXO") {
     using EnumerableSet for EnumerableSet.AddressSet;
     EnumerableSet.AddressSet private _minters;
-    using Address for address;
 
     /// @notice Creates `_amount` token to `_to`.
     function mint(address _to, uint256 _amount)
@@ -241,7 +239,7 @@ contract GXOToken is BEP20("Geometry", "GXO") {
         uint256 oldVotes,
         uint256 newVotes
     ) internal {
-        uint32 blockNumber = safe32(
+        uint32 blockNumber = _safe32(
             block.number,
             "GXO::_writeCheckpoint: block number exceeds 32 bits"
         );
@@ -264,9 +262,11 @@ contract GXOToken is BEP20("Geometry", "GXO") {
 
     /**
      * @dev Checks if value is 32 bits
+     *@param n value to be checked
+     *@param errorMessage error message to throw if fails
      * @return The number if valid.
      */
-    function safe32(uint256 n, string memory errorMessage)
+    function _safe32(uint256 n, string memory errorMessage)
         internal
         pure
         returns (uint32)
@@ -275,10 +275,19 @@ contract GXOToken is BEP20("Geometry", "GXO") {
         return uint32(n);
     }
 
+    /**
+     * @dev used get current chain ID
+     * @return id as a uint
+     */
     function getChainId() internal view returns (uint256 id) {
         id = block.chainid;
     }
 
+    /**
+     * @dev used by owner to add minter of token
+     * @param _addMinter address of minter to be added.
+     * @return true if successful.
+     */
     function addMinter(address _addMinter) public onlyOwner returns (bool) {
         require(
             _addMinter != address(0),
@@ -287,6 +296,11 @@ contract GXOToken is BEP20("Geometry", "GXO") {
         return EnumerableSet.add(_minters, _addMinter);
     }
 
+    /**
+     * @dev used by owner to delete minter of token
+     * @param _delMinter address of minter to be deleted.
+     * @return true if successful.
+     */
     function delMinter(address _delMinter) external onlyOwner returns (bool) {
         require(
             _delMinter != address(0),
@@ -295,14 +309,27 @@ contract GXOToken is BEP20("Geometry", "GXO") {
         return EnumerableSet.remove(_minters, _delMinter);
     }
 
+    /**
+     * @dev used to get the number of minters for this token
+     * @return number of minters.
+     */
     function getMinterLength() public view returns (uint256) {
         return EnumerableSet.length(_minters);
     }
 
+    /**
+     * @dev used to check if an address is a minter of token
+     * @return true or false based on minter status.
+     */
     function isMinter(address account) public view returns (bool) {
         return EnumerableSet.contains(_minters, account);
     }
 
+    /**
+     * @dev used by get the minter at n location
+     * @param _index index of address set
+     * @return address of minter at index.
+     */
     function getMinter(uint256 _index)
         external
         view
