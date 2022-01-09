@@ -262,6 +262,10 @@ contract GXOToken is BEP20("Geometry", "GXO") {
         emit DelegateVotesChanged(delegatee, oldVotes, newVotes);
     }
 
+    /**
+     * @dev Checks if value is 32 bits
+     * @return The number if valid.
+     */
     function safe32(uint256 n, string memory errorMessage)
         internal
         pure
