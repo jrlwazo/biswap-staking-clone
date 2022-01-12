@@ -84,14 +84,14 @@ pragma solidity >=0.8.10;
 //         }
 //     }
 // }
-// import "./GXOToken.sol";
+// import "./AURAToken.sol";
 
 // contract InvestorMine is Ownable {
 //     using SafeMath for uint256;
 //     using SafeBEP20 for IBEP20;
 
 //     // The GXO TOKEN!
-//     GXOToken public GXO;
+//     AURAToken public GXO;
 
 //     //Investor, Dev, Refs percent decimals
 //     uint256 public percentDec = 1000000;
@@ -124,7 +124,7 @@ pragma solidity >=0.8.10;
 //     event updatedAddresses(address _investoraddr, address _devaddr, address _refaddr, address _safuaddr);
 
 //     constructor(
-//         GXOToken _GXO,
+//         AURAToken _GXO,
 //         address _devaddr,
 //         address _refaddr,
 //         address _safuaddr,

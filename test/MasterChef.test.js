@@ -1,7 +1,7 @@
 const { expectRevert, time } = require('@openzeppelin/test-helpers');
 const { assert, expect } = require('chai');
 const JSBI = require('jsbi')
-const CakeToken = artifacts.require('GXOToken');
+const CakeToken = artifacts.require('AURAToken');
 const MasterChef = artifacts.require('MasterChef');
 const MockBEP20 = artifacts.require('libs/MockBEP20');
 let perBlock = '30000000000000000000';
