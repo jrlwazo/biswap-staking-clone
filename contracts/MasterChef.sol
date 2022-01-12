@@ -117,7 +117,7 @@ pragma solidity >=0.8.10;
 //     }
 // }
 
-// import "./GXOToken.sol";
+// import "./AURAToken.sol";
 
 // interface IMigratorChef {
 //     function migrate(IBEP20 token) external returns (IBEP20);
@@ -157,7 +157,7 @@ pragma solidity >=0.8.10;
 //         uint256 accGXOPerShare; // Accumulated GXOs per share, times 1e12. See below.
 //     }
 //     // The GXO TOKEN!
-//     GXOToken public GXO;
+//     AURAToken public GXO;
 //     //Pools, Farms, Dev, Refs percent decimals
 //     uint256 public percentDec = 1000000;
 //     //Pools and Farms percent from token per block
@@ -202,7 +202,7 @@ pragma solidity >=0.8.10;
 //     );
 
 //     constructor(
-//         GXOToken _GXO,
+//         AURAToken _GXO,
 //         address _devaddr,
 //         address _refAddr,
 //         address _safuaddr,

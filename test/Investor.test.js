@@ -1,15 +1,15 @@
 const { time } = require('@openzeppelin/test-helpers');
-const GXOToken = artifacts.require('GXOToken');
+const AURAToken = artifacts.require('AURAToken');
 const InvestorMine = artifacts.require('InvestorMine');
 
 const perBlock = '1633604000000000000';
 
 contract('InvestorMine', ([devAddr, refFeeAddr, safuAddr, investorAddr, minter, test]) => {//address,address,address,address,uint,uint
     beforeEach(async () => {
-        this.gxo = await GXOToken.new({ from: minter });
-        this.investor = await InvestorMine.new(this.gxo.address, devAddr, refFeeAddr, safuAddr, investorAddr, perBlock, '0', { from: minter });
+        this.aura = await AURAToken.new({ from: minter });
+        this.investor = await InvestorMine.new(this.aura.address, devAddr, refFeeAddr, safuAddr, investorAddr, perBlock, '0', { from: minter });
 
-        await this.gxo.addMinter(this.investor.address, { from: minter });
+        await this.aura.addMinter(this.investor.address, { from: minter });
     });
     it('change addresses to test', async () => {
         await this.investor.setNewAddresses(test, test, test, test, { from: minter });
@@ -27,10 +27,10 @@ contract('InvestorMine', ([devAddr, refFeeAddr, safuAddr, investorAddr, minter, 
         assert.equal(await this.investor.safuaddr.call(), safuAddr);
 
         await this.investor.updateGxoPerBlock('1633604000000000000', { from: minter });
-        assert.equal(await this.investor.GXOPerBlock.call(), '1633604000000000000');
+        assert.equal(await this.investor.AURAPerBlock.call(), '1633604000000000000');
 
         await this.investor.updateGxoPerBlock('1633604000000000000', { from: minter });
-        assert.equal(await this.investor.GXOPerBlock.call(), '1633604000000000000');
+        assert.equal(await this.investor.AURAPerBlock.call(), '1633604000000000000');
 
         await this.investor.changePercents('100000', '100000', '100000', '700000', { from: minter });
 
@@ -55,14 +55,14 @@ contract('InvestorMine', ([devAddr, refFeeAddr, safuAddr, investorAddr, minter, 
 
         await this.investor.withdraw({ from: minter });
         console.log('-----');
-        const devAddrBalance = await this.gxo.balanceOf(devAddr);
-        const refFeeAddrBalance = await this.gxo.balanceOf(refFeeAddr);
-        const safuAddrBalance = await this.gxo.balanceOf(safuAddr);
-        const investorAddrBalance = await this.gxo.balanceOf(investorAddr);
+        const devAddrBalance = await this.aura.balanceOf(devAddr);
+        const refFeeAddrBalance = await this.aura.balanceOf(refFeeAddr);
+        const safuAddrBalance = await this.aura.balanceOf(safuAddr);
+        const investorAddrBalance = await this.aura.balanceOf(investorAddr);
 
-        console.log('devAddrBalance gxo balance: ', devAddrBalance / 1e18);
-        console.log('refFeeAddrBalance gxo balance: ', refFeeAddrBalance / 1e18);
-        console.log('safuAddrBalance gxo balance: ', safuAddrBalance / 1e18);
-        console.log('investorAddrBalance gxo balance: ', investorAddrBalance / 1e18);
+        console.log('devAddrBalance aura balance: ', devAddrBalance / 1e18);
+        console.log('refFeeAddrBalance aura balance: ', refFeeAddrBalance / 1e18);
+        console.log('safuAddrBalance aura balance: ', safuAddrBalance / 1e18);
+        console.log('investorAddrBalance aura balance: ', investorAddrBalance / 1e18);
     });
 });
