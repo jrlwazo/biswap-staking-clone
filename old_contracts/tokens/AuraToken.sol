@@ -1,7 +1,7 @@
 //SPDX-License-Identifier:MIT
 pragma solidity >=0.8.0;
 
-import "../libraries/BEP20.sol";
+import "../libs/BEP20.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 // Geometry token with Governance.
