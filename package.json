@@ -5,7 +5,9 @@
   "scripts": {
     "migrate": "truffle migrate --network bscTestnet --reset",
     "compile": "truffle compile --network bscTestnet",
-    "test-aura": "npx builder test test/AuraToken.test.js",
+    "test-aura": "truffle test test/AuraToken.test.js",
+    "test-smartChef": "truffle test test/SmartChef.test.js",
+    "test-masterChef": "truffle test test/MasterChef.test.js",
     "test": "npx builder test",
     "coverage": "npx builder coverage"
   },
