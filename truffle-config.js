@@ -3,11 +3,11 @@ const mnemonic = ''
 
 module.exports = {
   networks: {
-    development: {
-      host: "127.0.0.1",     // Localhost (default: none)
-      port: 7545,            // Standard Ethereum port (default: none)
-      network_id: "97",       // Any network (default: none)
-    },
+    // development: {
+    //   host: "127.0.0.1",     // Localhost (default: none)
+    //   port: 7545,            // Standard Ethereum port (default: none)
+    //   network_id: "97",       // Any network (default: none)
+    // },
     bscTestnet: {
       provider: () => new HDWalletProvider(mnemonic, 'https://data-seed-prebsc-1-s1.binance.org:8545'
       ),
