@@ -3,6 +3,7 @@
 pragma solidity >=0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/safeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
@@ -11,7 +12,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
  *
  *
  */
-contract SmartChef is Ownable {
+contract SmartChef is Ownable, ReentrancyGuard {
     // using SafeMath for uint256;
     using SafeERC20 for IERC20Metadata;
 
@@ -25,7 +26,7 @@ contract SmartChef is Ownable {
     struct PoolInfo {
         IERC20Metadata lpToken; // Address of LP token contract.
         uint256 allocPoint; // How many allocation points assigned to this pool. AURAs to distribute per block.
-        uint256 lastRewardBlock; // Last block number that AURAs distribution occurs.
+        uint256 lastRewardBlock; // Last block number that AURAs distribution occured.
         uint256 accAURAPerShare; // Accumulated AURAs per share, times PRECISION_FACTOR. See below.
     }
 
@@ -88,12 +89,12 @@ contract SmartChef is Ownable {
     }
 
     // Set the limit amount.
-    function setLimitAmount(uint256 _amount) public onlyOwner {
+    function setLimitAmount(uint256 _amount) external onlyOwner {
         limitAmount = _amount;
     }
 
     // Return remaining limit amount
-    function remainingLimitAmount() public view returns (uint256) {
+    function remainingLimitAmount() external view returns (uint256) {
         if (userInfo[msg.sender].amount >= limitAmount) {
             return 0;
         }
@@ -170,7 +171,7 @@ contract SmartChef is Ownable {
     }
 
     // Stake aura tokens to SmartChef
-    function deposit(uint256 _amount) public {
+    function deposit(uint256 _amount) external nonReentrant {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
 
@@ -178,6 +179,7 @@ contract SmartChef is Ownable {
 
         updatePool(0);
         if (user.amount > 0) {
+            // calculate the amount of reward pending and transfer if needed
             uint256 pending = (user.amount * pool.accAURAPerShare) /
                 PRECISION_FACTOR -
                 user.rewardDebt;
@@ -201,7 +203,7 @@ contract SmartChef is Ownable {
     }
 
     // Withdraw aura tokens from STAKING.
-    function withdraw(uint256 _amount) public {
+    function withdraw(uint256 _amount) external nonReentrant {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
         require(user.amount >= _amount, "withdraw: not good");
@@ -224,7 +226,7 @@ contract SmartChef is Ownable {
     }
 
     // Withdraw without caring about rewards. EMERGENCY ONLY.
-    function emergencyWithdraw() public {
+    function emergencyWithdraw() external nonReentrant {
         PoolInfo storage pool = poolInfo[0];
         UserInfo storage user = userInfo[msg.sender];
         uint256 amountToTransfer = user.amount;
@@ -237,7 +239,7 @@ contract SmartChef is Ownable {
     }
 
     // Withdraw reward. EMERGENCY ONLY.
-    function emergencyRewardWithdraw(uint256 _amount) public onlyOwner {
+    function emergencyRewardWithdraw(uint256 _amount) external onlyOwner {
         require(
             _amount <= rewardToken.balanceOf(address(this)),
             "not enough token"
